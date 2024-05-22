@@ -53,7 +53,7 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.PROSOPONATOR_PAT }}
         run: |
             git submodule --init --recursive
-            cd captcha
+            cd a
             git fetch origin
             LOCAL=$(git rev-parse @)
             REMOTE=$(git rev-parse @{u})
