@@ -20,7 +20,7 @@ jobs:
               MATRIX_CONTEXT: ${{ toJson(matrix) }}
               NEEDS_CONTEXT: ${{ toJson(needs) }}
               INPUTS_CONTEXT: ${{ toJson(inputs) }}
-          run: |
+        run: |
               echo "******************************"
               echo "github:" "$GITHUB_CONTEXT"
               echo "******************************"
