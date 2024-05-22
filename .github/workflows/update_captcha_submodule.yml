@@ -52,11 +52,10 @@ jobs:
       - name: Update submodules
         env:
             GITHUB_TOKEN: ${{ secrets.PROSOPONATOR_PAT }}
-            GIT_AUTH_TOKEN: ${{ secrets.PROSOPONATOR_PAT }}
         run: |
             git config user.name "prosoponator[bot]"
             git config user.email "dev@prosopo.io"
             git submodule update --remote a
             git add .
-            git commit -m "Updated a submodule"
+            git commit -m "Updated submodule"
             git push
