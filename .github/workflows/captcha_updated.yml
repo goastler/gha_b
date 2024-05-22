@@ -1,4 +1,4 @@
-name: update_captcha_submodule
+name: captcha_updated
 on:
   repository_dispatch:
     types: [captcha_updated]
@@ -49,13 +49,13 @@ jobs:
         with:
           submodules: recursive
     
-      - name: Update submodules
+      - name: Re-run submodule checks for open PRs
         env:
             GITHUB_TOKEN: ${{ secrets.PROSOPONATOR_PAT }}
+            WORKFLOW: captcha_submodule.yml
         run: |
-            git config user.name "prosoponator[bot]"
-            git config user.email "dev@prosopo.io"
-            git submodule update --remote a
-            git add .
-            git commit -m "Updated submodule"
-            git push
+            PR_NUMBERS=$(gh pr list --state open --json number | jq -r '.[].number')
+            for PR_NUMBER in $PR_NUMBERS; do
+                echo "Triggering $WORKFLOW for PR #$PR_NUMBER"
+                gh workflow run $WORKFLOW -F pr_number=$PR_NUMBER
+            done
