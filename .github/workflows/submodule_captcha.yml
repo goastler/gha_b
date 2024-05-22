@@ -54,16 +54,15 @@ jobs:
       - name: Check submodule up-to-date
         env:
             GITHUB_TOKEN: ${{ secrets.PROSOPONATOR_PAT }}
-            PATH: a
+            SUBMODULE: a
         run: |
-            cd "$PATH"
-            git submodule update --init --recursive
+            cd "$SUBMODULE"
             git fetch origin
             LOCAL=$(git rev-parse @)
             REMOTE=$(git rev-parse origin/$(git rev-parse --abbrev-ref HEAD))
             if [ $LOCAL = $REMOTE ]; then
-                echo "submodule '$PATH' is up to date"
+                echo "submodule '$SUBMODULE' is up to date"
             else
-                echo "submodule '$PATH' is not up to date"
+                echo "submodule '$SUBMODULE' is not up to date"
                 exit 1
             fi
