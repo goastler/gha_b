@@ -59,3 +59,4 @@ jobs:
             cd a
             git fetch origin
             LOCAL=$(git rev-parse @)
+            REMOTE=$(git rev-parse @{u})
