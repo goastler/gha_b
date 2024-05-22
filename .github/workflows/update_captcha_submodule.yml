@@ -59,5 +59,4 @@ jobs:
             git submodule update --remote a
             git add .
             git commit -m "Updated a submodule"
-            git remote set-url origin https://prosoponator:${{ secrets.PROSOPONATOR_PAT }}@github.com/goastler/gha_b.git
             git push
