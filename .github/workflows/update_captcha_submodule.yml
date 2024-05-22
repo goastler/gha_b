@@ -1,0 +1,13 @@
+name: update_captcha_submodule
+on:
+  repository_dispatch:
+    types: [captcha_updated]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Run your script
+      run: echo hello
