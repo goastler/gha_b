@@ -58,3 +58,4 @@ jobs:
             git submodule update --init --recursive
             cd a
             git fetch origin
+            LOCAL=$(git rev-parse @)
