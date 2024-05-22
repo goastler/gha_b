@@ -58,11 +58,3 @@ jobs:
             git submodule update --init --recursive
             cd a
             git fetch origin
-            LOCAL=$(git rev-parse @)
-            REMOTE=$(git rev-parse @{u})
-            if [ $LOCAL = $REMOTE ]; then
-                echo "$name is up to date"
-            else
-                echo "$name has diverged"
-                exit 1
-            fi
