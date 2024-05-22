@@ -18,6 +18,8 @@ jobs:
         run: |
             git config user.name "prosoponator[bot]"
             git config user.email "dev@prosopo.io"
+            git config --global user.name "prosoponator[bot]"
+            git config --global user.email "dev@prosopo.io"
             git submodule update --remote a
             git commit -a -m "Updated a submodule"
             git push
