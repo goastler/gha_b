@@ -59,4 +59,10 @@ jobs:
             cd a
             git fetch origin
             LOCAL=$(git rev-parse @)
-            REMOTE=$(git rev-parse @{u})
+            REMOTE=$(git rev-parse origin/$(git rev-parse --abbrev-ref HEAD))
+            if [ $LOCAL = $REMOTE ]; then
+                echo "$name is up to date"
+            else
+                echo "$name has diverged"
+                exit 1
+            fi
