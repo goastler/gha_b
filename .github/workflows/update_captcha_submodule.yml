@@ -22,7 +22,7 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.PROSOPONATOR_PAT }}
         run: |
-            git submodule update --remote captcha
+            git submodule update --remote a
             git add '.gitmodules'
-            git commit -m "Updated captcha submodule"
+            git commit -m "Updated a submodule"
             git push
