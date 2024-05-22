@@ -2,7 +2,9 @@
 	path = captcha
 	url = https://github.com/goastler/gha_a.git
     update = merge
+	branch = main
 [submodule "a"]
 	path = a
 	url = https://github.com/goastler/gha_a.git
     update = merge
+	branch = main
