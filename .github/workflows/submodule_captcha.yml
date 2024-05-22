@@ -55,8 +55,9 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.PROSOPONATOR_PAT }}
         run: |
+            name="a"
             git submodule update --init --recursive
-            cd a
+            cd "$name"
             git fetch origin
             LOCAL=$(git rev-parse @)
             REMOTE=$(git rev-parse origin/$(git rev-parse --abbrev-ref HEAD))
