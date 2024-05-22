@@ -57,6 +57,7 @@ jobs:
             PATH: a
         run: |
             cd "$PATH"
+            git submodule update --init --recursive
             git fetch origin
             LOCAL=$(git rev-parse @)
             REMOTE=$(git rev-parse origin/$(git rev-parse --abbrev-ref HEAD))
