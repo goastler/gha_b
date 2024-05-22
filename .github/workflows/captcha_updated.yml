@@ -52,7 +52,7 @@ jobs:
       - name: Re-run submodule checks for open PRs
         env:
             GITHUB_TOKEN: ${{ secrets.PROSOPONATOR_PAT }}
-            WORKFLOW: captcha_submodule.yml
+            WORKFLOW: submodule_captcha.yml
         run: |
             PR_NUMBERS=$(gh pr list --state open --json number | jq -r '.[].number')
             for PR_NUMBER in $PR_NUMBERS; do
