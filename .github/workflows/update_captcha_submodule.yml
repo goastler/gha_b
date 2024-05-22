@@ -15,6 +15,7 @@ jobs:
       - name: Update submodules
         env:
             GITHUB_TOKEN: ${{ secrets.PROSOPONATOR_PAT }}
+            GIT_AUTH_TOKEN: ${{ secrets.PROSOPONATOR_PAT }}
         run: |
             git config user.name "prosoponator[bot]"
             git config user.email "dev@prosopo.io"
