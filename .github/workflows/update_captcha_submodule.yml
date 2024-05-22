@@ -23,6 +23,5 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.PROSOPONATOR_PAT }}
         run: |
             git submodule update --remote a
-            git add '.gitmodules'
-            git commit -m "Updated a submodule"
+            git commit -a -m "Updated a submodule"
             git push
