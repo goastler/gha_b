@@ -55,29 +55,32 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.PROSOPONATOR_PAT }}
             WORKFLOW_NAME: submodule_captcha
         run: |
+            # for each pr
             PR_NUMBERS=$(gh pr list --state open --json number | jq -r '.[].number')
             for PR_NUMBER in $PR_NUMBERS; do
+                # get the workflows
                 echo "Getting workflow runs for PR #$PR_NUMBER"
                 PAGE=1
                 while [ true ]; do
                     curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                         "https://api.github.com/repos/${{ github.repository }}/actions/runs?event=pull_request&per_page=100&page=$PAGE" > runs_page.json
 
-                    jq '.workflow_runs[]' runs_page.json >> runs.json
-                    
+                    cat runs_page.json
+                    exit 1
+
+                    WORKFLOW_RUN_ID=$(jq -r --arg pr "refs/pull/$PR_NUMBER/merge" '.workflow_runs[] | select(.head_branch==$pr) | select(.name=="captcha_submodule") | .id' runs.json)
+                    if [ -n "$WORKFLOW_RUN_ID" ]; then
+                        echo "Found workflow run $WORKFLOW_RUN_ID for PR #$PR_NUMBER"
+                        # curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                            # "https://api.github.com/repos/${{ github.repository }}/actions/runs/$WORKFLOW_RUN_ID/rerun"
+                    else
+                        echo "No workflow run found for PR #$PR_NUMBER"
+                    fi
+
                     PAGE_COUNT=$(jq '.workflow_runs | length' runs_page.json)
                     if [ $PAGE_COUNT -lt 100 ]; then
                         break
                     fi
                     PAGE=$((PAGE + 1))
                 done
-
-                WORKFLOW_RUN_ID=$(jq -r --arg pr "refs/pull/$PR_NUMBER/merge" '.workflow_runs[] | select(.head_branch==$pr) | select(.name=="captcha_submodule") | .id' runs.json)
-                if [ -n "$WORKFLOW_RUN_ID" ]; then
-                    echo "Found workflow run $WORKFLOW_RUN_ID for PR #$PR_NUMBER"
-                    # curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                        # "https://api.github.com/repos/${{ github.repository }}/actions/runs/$WORKFLOW_RUN_ID/rerun"
-                else
-                    echo "No workflow run found for PR #$PR_NUMBER"
-                fi
             done
