@@ -1,0 +1,66 @@
+name: submodule_captcha2
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print contexts
+        env:
+              GITHUB_CONTEXT: ${{ toJson(github) }}
+              ENV_CONTEXT: ${{ toJson(env) }}
+              VARS_CONTEXT: ${{ toJson(vars) }}
+              JOB_CONTEXT: ${{ toJson(job) }}
+              STEPS_CONTEXT: ${{ toJson(steps) }}
+              RUNNER_CONTEXT: ${{ toJson(runner) }}
+              SECRETS_CONTEXT: ${{ toJson(secrets) }}
+              STRATEGY_CONTEXT: ${{ toJson(strategy) }}
+              MATRIX_CONTEXT: ${{ toJson(matrix) }}
+              NEEDS_CONTEXT: ${{ toJson(needs) }}
+              INPUTS_CONTEXT: ${{ toJson(inputs) }}
+        run: |
+              echo "******************************"
+              echo "github:" "$GITHUB_CONTEXT"
+              echo "******************************"
+              echo "env:" "$ENV_CONTEXT"
+              echo "******************************"
+              echo "vars:" "$VARS_CONTEXT"
+              echo "******************************"
+              echo "job:" "$JOB_CONTEXT"
+              echo "******************************"
+              echo "steps:" "$STEPS_CONTEXT"
+              echo "******************************"
+              echo "runner:" "$RUNNER_CONTEXT"
+              echo "******************************"
+              echo "secrets:" "$SECRETS_CONTEXT"
+              echo "******************************"
+              echo "strategy:" "$STRATEGY_CONTEXT"
+              echo "******************************"
+              echo "matrix:" "$MATRIX_CONTEXT"
+              echo "******************************"
+              echo "needs:" "$NEEDS_CONTEXT"
+              echo "******************************"
+              echo "inputs:" "$INPUTS_CONTEXT"
+              echo "******************************"
+      - name: Checkout repository with submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+    
+      - name: Check submodule up-to-date
+        env:
+            GITHUB_TOKEN: ${{ secrets.PROSOPONATOR_PAT }}
+            SUBMODULE: a
+        run: |
+            cd "$SUBMODULE"
+            git fetch origin
+            LOCAL=$(git rev-parse @)
+            REMOTE=$(git rev-parse origin/$(git rev-parse --abbrev-ref HEAD))
+            if [ $LOCAL = $REMOTE ]; then
+                echo "submodule '$SUBMODULE' is up to date"
+            else
+                echo "submodule '$SUBMODULE' is not up to date"
+                exit 1
+            fi
