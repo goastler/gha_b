@@ -68,6 +68,7 @@ jobs:
 
                     # Use jq to find the latest workflow run for the workflow
                     WORKFLOW_RUN_ID=$(jq -r '.workflow_runs[] | select(.name=="$WORKFLOW_NAME") | .id' runs_page.json | head -n 1)
+                    echo "workflow run id: $WORKFLOW_RUN_ID"
                     if [ -n "$WORKFLOW_RUN_ID" ]; then
                         echo "Rerunning $WORKFLOW_NAME workflow run $WORKFLOW_RUN_ID for PR #$PR_NUMBER"
                         curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
