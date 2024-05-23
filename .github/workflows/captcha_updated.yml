@@ -67,6 +67,7 @@ jobs:
                         "https://api.github.com/repos/${{ github.repository }}/actions/runs?event=pull_request&per_page=100&page=$PAGE" > runs_page.json
 
                     # Use jq to find the latest workflow run for the workflow
+                    cat runs_page.json
                     WORKFLOW_RUN_ID=$(jq -r '.workflow_runs[] | select(.name=="$WORKFLOW_NAME") | .id' runs_page.json | head -n 1)
                     echo "workflow run id: $WORKFLOW_RUN_ID"
                     if [ -n "$WORKFLOW_RUN_ID" ]; then
