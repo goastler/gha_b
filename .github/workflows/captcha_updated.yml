@@ -58,27 +58,29 @@ jobs:
             # for each pr
             PR_NUMBERS=$(gh pr list --state open --json number | jq -r '.[].number')
             for PR_NUMBER in $PR_NUMBERS; do
-                # get the workflows
+                # get the workflows (paged, so have to loop over pages)
                 echo "Getting workflow runs for PR #$PR_NUMBER"
                 PAGE=1
+                WORKFLOW_COUNT=0
                 while [ true ]; do
                     curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                         "https://api.github.com/repos/${{ github.repository }}/actions/runs?event=pull_request&per_page=100&page=$PAGE" > runs_page.json
 
-                    cat runs_page.json
-                    exit 1
-
-                    WORKFLOW_RUN_ID=$(jq -r --arg pr "refs/pull/$PR_NUMBER/merge" '.workflow_runs[] | select(.head_branch==$pr) | select(.name=="captcha_submodule") | .id' runs.json)
+                    # Use jq to find the latest workflow run for the workflow
+                    WORKFLOW_RUN_ID=$(jq -r '.workflow_runs[] | select(.name=="$WORKFLOW_NAME") | .id' runs_page.json | head -n 1)
                     if [ -n "$WORKFLOW_RUN_ID" ]; then
-                        echo "Found workflow run $WORKFLOW_RUN_ID for PR #$PR_NUMBER"
-                        # curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                            # "https://api.github.com/repos/${{ github.repository }}/actions/runs/$WORKFLOW_RUN_ID/rerun"
+                        echo "Rerunning $WORKFLOW_NAME workflow run $WORKFLOW_RUN_ID for PR #$PR_NUMBER"
+                        curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                            "https://api.github.com/repos/${{ github.repository }}/actions/runs/$WORKFLOW_RUN_ID/rerun"
                     else
-                        echo "No workflow run found for PR #$PR_NUMBER"
+                        echo "No $WORKFLOW_NAME workflow run found for PR #$PR_NUMBER"
                     fi
 
-                    PAGE_COUNT=$(jq '.workflow_runs | length' runs_page.json)
-                    if [ $PAGE_COUNT -lt 100 ]; then
+                    # quit if seen all workflows
+                    PAGE_WORKFLOWS_LEN=$(jq '.workflow_runs | length' runs_page.json)
+                    WORKFLOW_COUNT=$((WORKFLOW_COUNT + PAGE_WORKFLOWS_LEN))
+                    TOTAL_WORKFLOWS_LEN=$(jq '.total_count' runs_page.json)
+                    if [ $WORKFLOW_COUNT -eq $TOTAL_WORKFLOWS_LEN ]; then
                         break
                     fi
                     PAGE=$((PAGE + 1))
